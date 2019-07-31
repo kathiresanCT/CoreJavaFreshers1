@@ -1,0 +1,23 @@
+what is checked exception
+
+what is unchecked exception
+
+who is responsible to handle checked and unchecked exception
+
+which is the base class of all exception and error
+
+Can we write only try block without catch and finally blocks?
+
+Explain exception handling mechanism in java?
+
+differentiate between error and exception?
+
+examples of unchecked exception
+
+examples of checked exception
+
+what is rethrowing an exception
+
+Can we throw an exception manually? If yes, how?
+
+
