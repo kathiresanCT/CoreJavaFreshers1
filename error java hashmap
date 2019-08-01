@@ -1,0 +1,72 @@
+package com.ct.day9;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+public class SqlDemo1 {
+
+	public static void main(String[] args) throws SQLException {
+		
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb","root","root");  
+		String qry="SELECT * FROM Employee";
+		Statement st= con.createStatement();
+		ResultSet rs=st.executeQuery(qry);
+		Empl emp=new Empl(); 
+		HashMap<Integer,Empl> empList=new HashMap<Integer,Empl>();	
+		while(rs.next()) {
+		emp.setEmpid(rs.getInt("emp_id"));
+		emp.setName(rs.getString(2));
+		emp.setSurName(rs.getString(3));
+		emp.setJob(rs.getString(4));
+		System.out.println("data "+emp);
+		empList.put(emp.getEmpid(), emp);
+		}
+		System.out.println("hash map data "+empList);
+		for(Entry em : empList.entrySet())
+			System.out.println(em.getKey()+" "+em.getValue());
+	}	
+
+}
+
+class Empl{
+	int empid;
+	String name;
+	String surName;
+	String job;
+	public int getEmpid() {
+		return empid;
+	}
+	public void setEmpid(int empid) {
+		this.empid = empid;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getSurName() {
+		return surName;
+	}
+	public void setSurName(String surName) {
+		this.surName = surName;
+	}
+	public String getJob() {
+		return job;
+	}
+	public void setJob(String job) {
+		this.job = job;
+	}
+	@Override
+	public String toString() {
+		return "Empl [empid=" + empid + ", name=" + name + ", surName=" + surName + ", job=" + job + "]";
+	}
+	
+	
+	
+}
