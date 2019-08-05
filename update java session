@@ -1,0 +1,55 @@
+
+Type Erasure
+
+javap -c file name
+ 
+https://javapapers.com/core-java/type-erasure/
+
+//String s=null;
+String s=new String();
+sysout(s);//ref //npe
+sysout(s.length());//npe
+sysout(s.size());//size of string 
+=================
+String s=new String();
+sysout(s.length());
+
+-----------------------------
+String s1="";
+sysout(s1.length());
+-----------------------------
+String s1=null;
+String s2=(String)s1;
+sysout(s2)
+-----------------------------
+
+
+
+
+why this is it throws Null pointer exception in the below code?
+	
+	Console c=System.console();//
+	System.out.println(new String(c.readPassword("password")));
+	
+use of consoleObj.writer(); ?
+
+
+LocalDate locald = LocalDate.of(1967, 06, 22);
+Date date = Date.valueOf(locald); 
+r.setDateOfBirth(date);
+
+Date date = r.getDate();
+LocalDate localD = date.toLocalDate();
+
+
+LocalDateTime ldt = LocalDateTime.now();
+System.out.println(DateTimeFormatter.ofPattern("MM-dd-yyyy", Locale.ENGLISH).format(ldt));
+System.out.println(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(ldt));
+System.out.println(ldt);
+
+util.Date myDate = new Date();
+System.out.println(myDate);
+System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(myDate));
+System.out.println(new SimpleDateFormat("yyyy-MM-dd").format(myDate));
+System.out.println(myDate);
+
