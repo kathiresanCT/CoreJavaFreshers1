@@ -1,0 +1,27 @@
+
+
+
+index.jsp----home page --wait 10 sec after which it has to be redirected to login
+		msg -> wait for 10 sec it will be redirected automatically
+
+login.jsp
+
+un, pwd - ctlr servlet
+
+in ctlr servlet ->
+		validate for usrname and pwd is admin,
+		if so then store the value in session obj
+
+success.jsp - >Welcome User! <userName> logged in successfully (dynamic) 
+		display a link <a href='logout'>
+		on clicking logout it should "redirect" to login.jsp
+		(2 <c:if >) 
+		<c:if test="${sessionScope.name==null}>	, here print login		
+		<c:if test="${sessionScope.name!=null}> , here print logout	
+
+if err 
+then forward to login.jsp and then 
+display the error message to user (use req attribute map)
+
+
+
