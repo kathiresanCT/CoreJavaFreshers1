@@ -1,0 +1,27 @@
+@Component("admin")
+public class Admin implements Employee {
+ 
+    public String work() {
+        return "something";
+    }
+}
+@Component("manager")
+public class Manager implements Employee {
+ 
+    public String work() {
+        return "something---manager";
+    }
+}
+
+@Service
+public class EmpService {
+     
+    @Autowired
+    private Employee emp;
+ 
+}
+
+
+//solution is 
+@Autowired
+ @Qualifier("admin")
