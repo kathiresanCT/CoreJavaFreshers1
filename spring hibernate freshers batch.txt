@@ -1,0 +1,478 @@
+•	Why Spring ?
+•	Spring Framework Architecture
+•	Inversion on Control(IOC)
+•	Dependency Injection(DI)
+•	Bean Life Cycle 
+•	Bean Post Processors
+•	Spring Beans Auto wiring
+•	Using XML & Using Annotations
+•	Java Based configuration
+•	Spring JDBC
+•	Declarative JDBC in Spring
+•	Understanding Templates
+•	Understanding Call backs
+•	Row Mapper
+•	Spring AOP
+•	Transaction management  
+•	Spring MVC
+•	Spring Rest (Implementation using Spring)
+•	Implementing Spring Rest using CXF
+
+
+Framework - library 
+
+Spring,Struts,JSF,Hibernate,Velocity.....
+
+Annotation
+
+Boiler plate codes
+
+Interface 21
+
+Spring - Rod Johnson - Pivotal
+
+Spring modules 
+
+	spring core
+	spring beans
+	spring security
+	Spring web flow
+	Spring cloud
+	Spring boot
+	Spring XD
+	Spring Hateos
+	: : :
+	: : :
+
+why & where to use spring -Advantages:
+
+beans, core + jre
+
+Containers
+------------
+Spring Container / IOC Container / DI Container
+
+IOC - inversion of control
+ 
+DI - 
+class A{
+	
+}
+
+class empl
+{
+	Address	address;
+	//GETTER AND SETTER	
+
+}
+
+
+Employee e=new Employee();
+Address adr=new Addr();
+e.setAddr(adr);
+
+
+
+Types of container :
+	
+
+Spring core application
+
+wiring
+================================
+
+
+Auto wiring
+
+
+
+
+index.jsp----home page --wait 10 sec after which it has to be redirected to login
+		msg -> wait for 10 sec it will be redirected automatically
+
+login.jsp
+
+un, pwd - ctlr servlet
+
+in ctlr servlet ->
+		validate for usrname and pwd is admin,
+		if so then store the value in session obj
+
+success.jsp - >Welcome User! <userName> logged in successfully (dynamic) 
+		display a link <a href='logout'>
+		on clicking logout it should "redirect" to login.jsp
+		(2 <c:if >) 
+		<c:if test="${sessionScope.name==null}>	, here print login		
+		<c:if test="${sessionScope.name!=null}> , here print logout	
+
+if err 
+then forward to login.jsp and then 
+display the error message to user (use req attribute map)
+
+
+Maven - build tool(project management tool)
+
+Pom.xml---> 
+
+Spring core application
+
+Task :
+
+create a meta config inside application folder (ie outside src) and create obj 
+call getter methods spring bean class and print the default value
+
+create a meta configfile in desktop and create obj 
+call getter methods spring bean class and print the default value
+
+
+
+
+Bean factory container
+Application context container
+
+wiring
+	setter injection
+	constructor injection
+	interface injection - no available in java
+
+
+Property place holder configurer
+====================================
+
+create a properties file and keep it in resource folder
+	jdbc.driverClassName=com.mysql.jdbc.Driver
+	jdbc.url=jdbc:mysql://localhost:3306/mydb
+	jdbc.username=root
+	jdbc.password=root
+
+then in xml add below lines
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>database.properties</value>
+		</property>
+	</bean>
+
+OR
+
+use 
+
+<context:property-placeholder location="classpath:my.properties"/>
+
+or try using <util:properties
+
+to read in application - SPeL
+
+	${jdbc.keyName} - to be given above the property ie variable
+
+
+
+life cycle of both containers(self)
+
+
+Manual - setter or constructor ----> ref
+
+Autowiring:
+
+use an attribute called auto-wire in bean tag in xml
+
+byType
+byName
+constructor
+autodetect
+
+
+
+Starting with Spring 2.5, the framework introduced a new style of Dependency 
+Injection driven by @Autowired Annotations. This annotation allows Spring to 
+resolve and inject collaborating beans into your bean.
+
+
+
+below is using byType:
+
+@Autowired
+private Employee emp;
+
+@Autowired
+public Employee setEmployee(Employee e)
+{
+	this.emp=e;
+}
+
+above constructor - by constructor
+
+============================================================
+Ambiguity in a@Autowired 
+
+@Component("admin")
+public class Admin implements Employee {
+ 
+    public String work() {
+        return "something";
+    }
+}
+@Component("manager")
+public class Manager implements Employee {
+ 
+    public String work() {
+        return "something---manager";
+    }
+}
+
+@Service
+public class EmpService {
+     
+    @Autowired
+    private Employee emp;
+ 
+}
+
+
+//solution is 
+@Autowired
+ @Qualifier("admin")
+
+
+Spring MVC
+===========
+create a apring maven web project
+
+add dependency in pom (spring-webmvc [includes spring-web] and spring context)
+
+in web.xml
+<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>
+			org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+ 
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+create a xml with following naming convention *-servlet.xml
+
+lets name it as dispatcher-servlet.xml
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+ 
+	<context:component-scan base-package="com.programcreek.helloworld.controller" />
+ 
+		
+</beans>
+
+create a controller class
+
+@Controller
+public class HelloWorldController {
+
+	@RequestMapping("/")
+	public String showMessage(){
+		return "index";
+	}
+}
+
+create index page in the path given in view resolver
+
+in jsp -> dislay hello world in it
+
+@Component
+
+@Controller
+@Service
+@Repository
+
+@RequestMapping
+@RequestParam
+@PathVariable
+
+@ModelAttribute
+
+@Valid - <mvc:annotation-driven/> JSR330
+
+@Transactional - <tx:annotation-driven/>
+
+@Resource- byName
+
+
+Neither BindingResult nor plain target object for bean name 'customer' 
+available as request attribute
+
+Spring validation - JSR330
+------------------------------
+
+@Valid - <mvc:annotation-driven/> JSR330
+------------------------------------------------------------------------
+used for validating the bean object
+
+in bean class use annotations like	,@NotBlank,@NotEmpty
+
+Should be kept before bean obj in controller class (ie in post req after user triggers submit)
+
+to handle (ie to print errors use form:errors in ui and in controller use
+BindingResult class)
+
+	in BindingResult we have a method hasErrors(), based on which we can redirect the request to different page
+
+** To Enable @valid annotation , in disp-serv.xml add <mvc:annotation-driven/>
+
+add this in beans xmlns
+	 xmlns:mvc="http://www.springframework.org/schema/mvc"
+	
+and below in schemaLocation
+
+ http://www.springframework.org/schema/mvc  
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+
+
+Unable to create a Configuration, because no Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath
+
+Invocation of init method failed; nested exception is java.lang.NoClassDefFoundError: org/slf4j/impl/StaticLoggerBinder
+
+<properties>
+		<java-version>1.7</java-version>
+		<org.springframework-version>4.0.2.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.7.4</org.aspectj-version>
+		<org.slf4j-version>1.7.5</org.slf4j-version>
+	</properties>
+
+
+Root Cause - version incompatible
+
+java.lang.AbstractMethodError: org.hibernate.validator.engine.ConfigurationImpl.getDefaultParameterNameProvider()Ljavax/validation/ParameterNameProvider;
+
+
+
+
+
+Spring Jdbc
+
+	core - jdbcTemplate classes
+	DataSource - to access datasource
+	Object - db reults
+	Support - 
+
+
+in DB:
+
+create table employee(  
+id number(10),  
+name varchar2(100),  
+salary number(10)  
+);  
+
+in bean class
+
+public class Employee {  
+private int id;  
+private String name;  
+private float salary;  
+//no-arg and parameterized constructors  
+//getters and setters  
+}  
+
+in dao class
+
+private JdbcTemplate jdbcTemplate;  
+  
+public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {  
+    this.jdbcTemplate = jdbcTemplate;  
+}  
+  
+public int saveEmployee(Employee e){  
+    String query="insert into employee values(  
+    '"+e.getId()+"','"+e.getName()+"','"+e.getSalary()+"')";  
+    return jdbcTemplate.update(query);  
+}  
+
+
+in xml
+
+<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />  
+<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />  
+<property name="username" value="system" />  
+<property name="password" value="oracle" />  
+</bean>  
+  
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
+<property name="dataSource" ref="ds"></property>  
+</bean>  
+  
+<bean id="edao" class="com.javatpoint.EmployeeDao">  
+<property name="jdbcTemplate" ref="jdbcTemplate"></property>  
+</bean>  
+
+
+in  main
+
+ApplicationContext ctx=new ClassPathXmlApplicationContext("applicationContext.xml");  
+      
+    EmployeeDao dao=(EmployeeDao)ctx.getBean("edao");  
+    int status=dao.saveEmployee(new Employee(102,"Amit",35000));  
+    System.out.println(status);
+
+
+
+
+
+Get all data fro db:
+
+in dao 
+
+
+public List<Employee> getAllEmployeesRowMapper(){  
+ return template.query("select * from employee",new RowMapper<Employee>(){  
+    @Override  
+    public Employee mapRow(ResultSet rs, int rownumber) throws SQLException {  
+        Employee e=new Employee();  
+        e.setId(rs.getInt(1));  
+        e.setName(rs.getString(2));  
+        e.setSalary(rs.getInt(3));  
+        return e;  
+    }  
+    });  
+}  
+
+Jdbc Template :
+
+queryForInt()
+queryForLong()
+queryForObject()
+queryForList()
+
+
+insert data:
+
+String sql = "INSERT INTO Employee(name, age,city) VALUES(?, ?, ?)";
+int returnValue = getJdbcTemplate().update(sql,new Object[] { "name",28,"Mum"});
+        
+
+get all info
+=============
+
+
+    public List<Employee> getAllEmployee() {
+ 
+        String sql = "SELECT * FROM Employee";
+        List<Employee> lstEmployees  = getJdbcTemplate().query(
+                sql,
+                new BeanPropertyRowMapper(Employee.class));
+        return lstEmployees;
+    }
+
+
+
+
+Named parameter - preparedstatementcallback
+
