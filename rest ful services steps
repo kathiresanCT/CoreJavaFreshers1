@@ -1,0 +1,61 @@
+
+Step1:
+
+create a maven webapp project 
+
+Step 2:
+add spring-webmvc 3.2.9 dependency(4.0.0)
+
+Step 3:
+create a web.xml and servlet and servlet mapping tag for dispatcher servlet
+
+<servlet>    
+    <servlet-name>dispatcher</servlet-name>    
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>    
+    <load-on-startup>1</load-on-startup>      
+</servlet>    
+<servlet-mapping>    
+    <servlet-name>dispatcher</servlet-name>    
+    <url-pattern>/rest/</url-pattern>    
+</servlet-mapping> 
+
+step 4:
+Then create a dispatcher descriptor xml file - naming convention to be followed
+	
+	*-servlet.xml 
+	* means should be name given in <servlet-name> tag in web.xml
+
+	then add view resolver - InternalResourceViewResolver bean tag(ensure prefix and suffix
+	are pointing to existing folder and extn)
+
+Then ensure <context:component scan is pointing to base package>
+-----------------------------------------------------------------------------------
+NOTE : pls check its poiting to base not a specific folder
+-----------------------------------------------------------------------------------
+step 5:
+	Spring 5 has @GetMapping etc
+	Spring 4 has @RestController
+	But in Spring 3 @controller + @ResponseBody to be use for json formatting or 
+	Xmlformatting
+	
+Step 6:
+	Add mvc:annotation driven in disp-serv.xml toenable @responsebody
+
+step 7:
+	follow same steps for layered architecure
+Step 8:
+	create a controller , annotate it as @Controller and 
+	create methods to handle services
+	
+	Say for example addEmployee
+	 @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	 @ResponseBody
+	 public Employee findEmployee(@PathVariable("id") long employeeId) {
+		//code to retrieve from db		
+	 	return emp;
+		}
+
+	
+In the above code @Responsebody is for conversion 
+@ResponseBody annotation tells a controller that the object returned is 
+automatically serialized into JSON and passed back into the HttpResponse object.
