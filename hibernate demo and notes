@@ -1,0 +1,166 @@
+Hibernate
+
+ORM
+JNDI
+problems in traditional jdbc coding 
+difference between hibernate and spring jdbcTemplate
+
+what is JPA
+difference between jpaHibernate and hibernate
+
+different ORM tools available in market
+
+data types used in different DB
+
+Oracle -
+MySql -MS
+MS Sql - MS
+DB2  -IBM
+
+Cassandra
+MarioDB
+
+SQLite
+
+Derby
+H2
+
+MongoDB
+
+Hibernate notes
+=================
+https://thoughts-on-java.org/5-things-you-need-to-know-when-using-hibernate-with-mysql/
+
+Maven dependancy needed:
+-------------------------
+
+<dependency>
+   <groupId>org.hibernate</groupId>
+   <artifactId>hibernate-core</artifactId>
+   <version>4.3.6.Final</version>
+</dependency>
+
+Support dependancy :
+
+	Hibernate proxy model:
+	
+	<dependency>
+   <groupId>org.javassist</groupId>
+   <artifactId>javassist</artifactId>
+   <version>3.18.2-GA</version>
+	</dependency>
+
+Then Db dependancy
+
+Then DataSource - Dbcp or dbcp2 or cp30
+
+Hibernate: drop table if exists PRODUCTS
+Hibernate: create table PRODUCTS (pid integer not null, pname varchar(255), price double precision, primary key (pid))
+
+
+
+
+
+Import the packages :
+
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+
+Then 
+create a configuration obj and read xml for config
+
+Configuration cf = new Configuration();
+cf.configure(“hibernate.cfg.xml”);
+
+
+Then using this config we can create this SessionFactory 
+
+SessionFactory sf =  cf.buildSessionFactory();
+
+
+SessionFactory is an interface
+
+Using SessionFactory we can create Session 
+
+Session session = sf.openSession();
+
+we can manipulate data by using methods like save,update,load,delete......
+
+we can control the transaction using 
+
+Transaction tx = session.beginTransaction();
+and tx.commit(); or tx.rollback();
+
+
+===================================================================
+In Hibernate, it was often to build a SessionFactoryand pull out a Session as follows:
+
+SessionFactory sf=new Configuration().configure().buildSessionFactory();
+Session session = sf.openSession();
+ 
+
+	However, since Hibernate 4.x, this approach is deprecated. According to Hibernate 4 API docs, the Configuration class’ buildSessionFactory() method is deprecated and it recommends developers to use the buildSessionFactory(ServiceRegistry) instead. 
+
+	Here is the new recommended code snippet that builds the SessionFactorybased on a ServiceRegistry and obtains the Session:
+
+
+Configuration configuration = new Configuration().configure();
+ServiceRegistryBuilder registry = new ServiceRegistryBuilder();
+registry.applySettings(configuration.getProperties());
+ServiceRegistry serviceRegistry = registry.buildServiceRegistry();
+SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+ 
+Session session = sessionFactory.openSession();
+
+
+===================================================================================
+* Note:
+---------
+The Configuration class’ configure() method loads mappings and properties from the convention resource file hibernate.cfg.xml which should be present in the classpath. 
+===================================================================================
+The above code again got modified:
+-----------------------------------
+
+private static SessionFactory sessionFactory;
+     
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            // loads configuration and mappings
+            Configuration configuration = new Configuration().configure();
+            ServiceRegistry serviceRegistry
+                = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+             
+            // builds a session factory from the service registry
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);           
+        }
+
+Usefull links & codes :
+--------------------------
+
+https://docs.jboss.org/hibernate/core/4.2/quickstart/en-US/html/ch02.html#hibernate-gsg-tutorial-basic-config
+
+@Entity
+@Table(name = "author", schema = "bookstore")
+public class Author { … }	
+
+
+<hibernate-mapping
+         schema="schemaName"                          (1)
+         catalog="catalogName"                        (2)
+         default-cascade="cascade_style"              (3)
+         default-access="field|property|ClassName"    (4)
+         default-lazy="true|false"                    (5)
+         auto-import="true|false"                     (6)
+         package="package.name"                       (7) />
+
+1	schema (optional): the name of a database schema.
+2	catalog (optional): the name of a database catalog.
+3	default-cascade (optional - defaults to none): a default cascade style.
+4	default-access (optional - defaults to property): the strategy Hibernate should use for accessing all properties. It can be a custom implementation of PropertyAccessor.
+5	default-lazy (optional - defaults to true): the default value for unspecified lazy attributes of class and collection mappings.
+6	auto-import (optional - defaults to true): specifies whether we can use unqualified class names of classes in this mapping in the query language.
+7	package (optional): specifies a package prefix to use for unqualified class names in the mapping document.
+
+
+
