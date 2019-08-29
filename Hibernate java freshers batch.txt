@@ -1,0 +1,321 @@
+Hibernate
+
+ORM
+JNDI
+problems in traditional jdbc coding 
+difference between hibernate and spring jdbcTemplate
+
+what is JPA
+difference between jpaHibernate and hibernate
+
+different ORM tools available in market
+
+data types used in different DB
+
+Oracle -
+MySql -MS
+MS Sql - MS
+DB2  -IBM
+
+Cassandra
+MarioDB
+
+SQLite
+
+Derby
+H2
+
+MongoDB
+
+Hibernate notes
+=================
+https://thoughts-on-java.org/5-things-you-need-to-know-when-using-hibernate-with-mysql/
+
+Maven dependancy needed:
+-------------------------
+
+<dependency>
+   <groupId>org.hibernate</groupId>
+   <artifactId>hibernate-core</artifactId>
+   <version>4.3.6.Final</version>
+</dependency>
+
+Support dependancy :
+
+	Hibernate proxy model:
+	
+	<dependency>
+   <groupId>org.javassist</groupId>
+   <artifactId>javassist</artifactId>
+   <version>3.18.2-GA</version>
+	</dependency>
+
+Then Db dependancy
+
+Then DataSource - Dbcp or dbcp2 or cp30
+
+Hibernate: drop table if exists PRODUCTS
+Hibernate: create table PRODUCTS (pid integer not null, pname varchar(255), price double precision, primary key (pid))
+
+
+
+
+
+Import the packages :
+
+import org.hibernate.*;
+import org.hibernate.cfg.*;
+
+Then 
+create a configuration obj and read xml for config
+
+Configuration cf = new Configuration();
+cf.configure(“hibernate.cfg.xml”);
+
+
+Then using this config we can create this SessionFactory 
+
+SessionFactory sf =  cf.buildSessionFactory();
+
+
+SessionFactory is an interface
+
+Using SessionFactory we can create Session 
+
+Session session = sf.openSession();
+
+we can manipulate data by using methods like save,update,load,delete......
+
+we can control the transaction using 
+
+Transaction tx = session.beginTransaction();
+and tx.commit(); or tx.rollback();
+
+
+===================================================================
+In Hibernate, it was often to build a SessionFactoryand pull out a Session as follows:
+
+SessionFactory sf=new Configuration().configure().buildSessionFactory();
+Session session = sf.openSession();
+ 
+
+	However, since Hibernate 4.x, this approach is deprecated. According to Hibernate 4 API docs, the Configuration class’ buildSessionFactory() method is deprecated and it recommends developers to use the buildSessionFactory(ServiceRegistry) instead. 
+
+	Here is the new recommended code snippet that builds the SessionFactorybased on a ServiceRegistry and obtains the Session:
+
+
+Configuration configuration = new Configuration().configure();
+ServiceRegistryBuilder registry = new ServiceRegistryBuilder();
+registry.applySettings(configuration.getProperties());
+ServiceRegistry serviceRegistry = registry.buildServiceRegistry();
+SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+ 
+Session session = sessionFactory.openSession();
+
+
+===================================================================================
+* Note:
+---------
+The Configuration class’ configure() method loads mappings and properties from the convention resource file hibernate.cfg.xml which should be present in the classpath. 
+===================================================================================
+The above code again got modified:
+-----------------------------------
+
+private static SessionFactory sessionFactory;
+     
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            // loads configuration and mappings
+            Configuration configuration = new Configuration().configure();
+            ServiceRegistry serviceRegistry
+                = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+             
+            // builds a session factory from the service registry
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);           
+        }
+
+Usefull links & codes :
+--------------------------
+
+https://docs.jboss.org/hibernate/core/4.2/quickstart/en-US/html/ch02.html#hibernate-gsg-tutorial-basic-config
+
+@Entity
+@Table(name = "author", schema = "bookstore")
+public class Author { … }	
+
+
+<hibernate-mapping
+         schema="schemaName"                          (1)
+         catalog="catalogName"                        (2)
+         default-cascade="cascade_style"              (3)
+         default-access="field|property|ClassName"    (4)
+         default-lazy="true|false"                    (5)
+         auto-import="true|false"                     (6)
+         package="package.name"                       (7) />
+
+1	schema (optional): the name of a database schema.
+2	catalog (optional): the name of a database catalog.
+3	default-cascade (optional - defaults to none): a default cascade style.
+4	default-access (optional - defaults to property): the strategy Hibernate should use for accessing all properties. It can be a custom implementation of PropertyAccessor.
+5	default-lazy (optional - defaults to true): the default value for unspecified lazy attributes of class and collection mappings.
+6	auto-import (optional - defaults to true): specifies whether we can use unqualified class names of classes in this mapping in the query language.
+7	package (optional): specifies a package prefix to use for unqualified class names in the mapping document.
+
+
+
+If we use annotations instead of xml then use below in hib.cfg.xml
+
+<Mapping class="full qualified name"/>
+
+mapping tag instructs hibernate to perform mapping for classes refereed by class attribute.
+==============================================================================
+NOTE : for every pojo class a table to be created we use the above line 
+==============================================================================
+
+
+load and get :
+
+When you call session.load() method, it will always return a “proxy” object,  
+whats the meaning of proxy object ?
+
+Proxy means, hibernate will prepare some fake object with given identifier value in the memory without hitting the database, for example if we call session.load(Student.class,new Integer(107));  
+
+> hibernate will create one fake Student object [row] in the memory with id 107, but remaining properties of Student class will not even be initialized.
+
+It will hit the database only when we try to retrieve the other properties of Student object i mean stdName, stdCountry.  If we call s2.getStdName() then hibernate will hit the database and search the row with student id 107 and retrieve the values, if object [row] not found in the database it will throws ObjectNotFoundException.,
+
+session.load()
+It will always return a “proxy” (Hibernate term) without hitting the database. In Hibernate, proxy is an object with the given identifier value, its properties are not initialized yet, it just look like a temporary fake object.
+If no row found , it will throws an ObjectNotFoundException.
+2. session.get()
+It always hit the database and return the real object, an object that represent the database row, not proxy.
+If no row found , it return null.
+
+
+for id column - use identity as mysql supports Auto_Increment
+
+sequence - @Sequence generator
+
+
+Question;
+
+is it mandatory to call flush method after update in hibernate
+
+
+Obtain the value specified (if any) for the first row to be returned from the query results; zero-based. Used,in conjunction with getMaxResults() in "paginated queries". No value specified means the first resultis returned. Zero and negative numbers are the same as no setting.
+
+
+
+Apply Restrictions on table:
+==============================
+Criteria API allows you to build up a criteria query object programmatically;
+
+To create criteria:
+
+	Criteria crit = session.createCriteria(Product.class);
+	List<Product> results = crit.list();
+
+Criteria crit = session.createCriteria(Product.class);
+crit.add(Restrictions.eq("description","Mouse"));
+List<Product> results = crit.list();
+
+not equals:
+
+crit.add(Restrictions.ne("description","Mouse"));
+
+
+Like and ilike:
+
+Criteria crit = session.createCriteria(Product.class);
+crit.add(Restrictions.like("name","Mou%",MatchMode.ANYWHERE));
+List<Product> results = crit.list();
+
+Matchmethod:
+
+ANYWHERE: Anyplace in the string
+END: The end of the string
+EXACT: An exact match
+START: The beginning of the string
+
+S F W G H O
+
+Restrictions.isNull() and Restrictions.isNotNull() example
+
+Criteria crit = session.createCriteria(Product.class);
+crit.add(Restrictions.isNull("name"));
+List<Product> results = crit.list();
+
+Criteria crit = session.createCriteria(Product.class);
+crit.add(Restrictions.lt("price",10.0));
+crit.add(Restrictions.ilike("description","mouse", MatchMode.ANYWHERE));
+List<Product> results = crit.list();
+Combining Two or More Criteria Examples
+
+
+Combining 2 or more criteria:
+==============================
+
+disjunction:
+=============
+Criteria crit = session.createCriteria(Product.class);
+Criterion priceLessThan = Restrictions.lt("price", 10.0);
+Criterion des=crit.add(Restrictions.ilike("description","mouse", MatchMode.ANYWHERE));
+
+Disjunction disjunction = Restrictions.disjunction();
+disjunction.add(priceLessThan);
+disjunction.add(des);
+crit.add(disjunction);
+List results = crit.list();
+
+paging:
+Criteria crit = session.createCriteria(Product.class);
+crit.setFirstResult(1);
+crit.setMaxResults(20);
+List<Product> results = crit.list();
+
+Distinct Result:
+
+Criteria crit = session.createCriteria(Product.class);
+Criterion price = Restrictions.gt("price",new Double(25.0));
+crit.setResultTransformer( DistinctRootEntityResultTransformer.INSTANCE )
+List<Product> results = crit.list();
+
+Hibernate criteria – sort query :
+
+Criteria crit = session.createCriteria(Product.class);
+crit.add(Restrictions.gt("price",10.0));
+crit.addOrder(Order.desc("price"));
+List<Product> results = crit.list();
+
+Crietria c=session.createCriteria(Emp.class);  
+c.addOrder(Order.asc("salary"));  
+List list=c.list();  
+
+projection:
+
+Criteria c=session.createCriteria(Emp.class);  
+c.setProjection(Projections.property("name"));  
+List list=c.list();  
+
+Joins:
+
+Criteria crit = session.createCriteria(Supplier.class);
+Criteria prdCrit = crit.createCriteria("products");
+prdCrit.add(Restrictions.gt("price",25.0));
+List results = crit.list();
+
+
+QBE :
+====
+
+Detached queries:
+
+DetachedCriteria query = DetachedCriteria.forClass(Cat.class)
+    .add( Property.forName("sex").eq('F') );
+  //setProjection( Property.forName("weight").avg() ); 
+Session session = ....;
+Transaction txn = session.beginTransaction();
+List results = query.getExecutableCriteria(session).setMaxResults(100).list();
+txn.commit();
+session.close();
