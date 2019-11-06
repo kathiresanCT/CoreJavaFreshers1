@@ -1,0 +1,6 @@
+ <property name = "hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+      <property name = "hibernate.connection.driver_class" value = "com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name = "hibernate.connection.url" value = "jdbc:sqlserver://localhost;databaseName=cust;instanceName=SQLEXPRESS;"/>
+      <property name = "hibernate.connection.username" value = "sa"/>
+      <property name = "hibernate.connection.password" value = ""/>
+      <property name = "hibernate.show_sql" value="true"/>
